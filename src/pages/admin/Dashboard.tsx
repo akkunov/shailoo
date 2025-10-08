@@ -1,9 +1,12 @@
 import {Button} from "@/components/ui/button.tsx";
 import {Outlet, useNavigate} from "react-router-dom";
+import {useAuthStore} from "@/store/authStore.ts";
 
 
 export default function Dashboard() {
+    const authStore = useAuthStore()
     const navigate = useNavigate()
+    console.log(authStore.token)
     return (
         <>
             <div className={`mt-2 flex flex-row gap-4`}>

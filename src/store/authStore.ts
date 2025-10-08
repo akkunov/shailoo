@@ -38,12 +38,14 @@ export const useAuthStore = create<AuthState>()(
                         phone,
                         password,
                     });
+                    localStorage.setItem("token", response.data.token);
+                    console.log(response.data)
                     set({
                         user: response.data.user,
                         token: response.data.token,
                         loading: false,
                     });
-                    console.log(response.data)
+
                     axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
                 } catch (err) {
                     let message = "Неизвестная ошибка";

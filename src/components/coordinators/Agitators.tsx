@@ -13,7 +13,7 @@ import {useAuthStore} from "@/store/authStore.ts";
 type EditableUser = User & { isEditing?: boolean };
 
 export default function AgitatorsComponent() {
-    const { fetchAgitators, createAgitator, updateAgitator, deleteAgitator, assignUIKs, agitators, loading, error } =
+    const { fetchAgitators, createAgitator, updateAgitator, deleteAgitator, agitators, loading, error } =
         useAgitatorsStore();
     const {user} = useAuthStore()
     const [editableUsers, setEditableUsers] = useState<EditableUser[]>([]);
@@ -29,7 +29,6 @@ export default function AgitatorsComponent() {
 
 
     useEffect(() => {
-        console.log(user)
         fetchAgitators("agitators")
             .then(() => toast.success("Данные загружены"))
             .catch((err: unknown) =>
@@ -46,7 +45,6 @@ export default function AgitatorsComponent() {
     }, [agitators]);
 
     const handleChange = (id: number, field: keyof User, value: string) => {
-        console.log(uiks)
         setEditableUsers((prev) =>
             prev.map((u) => (u.id === id ? { ...u, [field]: value } : u))
         );
@@ -85,12 +83,15 @@ export default function AgitatorsComponent() {
     const handleCreate = async ( ) => {
         if(!user) return toast.error('Ошибка пользватель не найден')
         await createAgitator(form)
-                .then(() => toast.success("Агитатор добавлен"))
+                .then((res) => {
+                    console.log(res)
+                    toast.success("Агитатор добавлен")
+                    return res
+                }).then((res) => {
+                console.log(res)
+            })
                 .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "Ошибка при добавлении"))
 
-        await assignUIKs(user?.id, form.uiks)
-            .then(() => toast.success("Агитатор добавлен"))
-            .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "Ошибка при добавлении"))
 
             setForm({ firstName: "", lastName: "", middleName: "", phone: "", pin: "", uiks: [] });
     };
@@ -143,7 +144,6 @@ export default function AgitatorsComponent() {
                             options={uiks.map((uik) => ({ label: ` ${uik.code}, ${uik.name}`, value:`${uik.code}` }))}
                             selected={form.uiks}
                             onChange={(values) => {
-                                console.log(values)
                                 setForm({...form, uiks: values})
                             }}
                             placeholder="Выберите УИКи"

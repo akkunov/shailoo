@@ -43,6 +43,7 @@ export default function AuthForm() {
             }>("/auth/login", values);
 
             authStore.setUser(response.data.user, response.data.token);
+
             navigate('/')
 
         } catch (err:unknown) {

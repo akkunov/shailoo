@@ -14,7 +14,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { voterApi } from "@/api/voters";
 import type {VoterInput } from "@/api/voters";
-import location from "../location.json";
+import location from "./location.json";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
