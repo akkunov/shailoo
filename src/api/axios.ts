@@ -13,15 +13,6 @@ api.interceptors.response.use(
     }
 );
 
-api.interceptors.request.use((config) => {
-    const store = localStorage.getItem("auth-storage")
-    const token = JSON.parse(store || "")
-    if (token.state.token) {
-        config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-})
-
 // ✅ Обрабатываем 401 (не авторизован)
 api.interceptors.response.use(
     (response) => response,
