@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>()(
             login: async (phone: string, password: string) => {
                 set({ loading: true, error: null });
                 try {
-                    const response = await axios.post<LoginResponse>("/api/auth/login", {
+                    const response = await axios.post<LoginResponse>("/auth/login", {
                         phone,
                         password,
                     });
