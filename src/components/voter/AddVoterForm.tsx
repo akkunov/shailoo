@@ -12,11 +12,12 @@ import { FiUserPlus } from "react-icons/fi";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { voterApi } from "@/api/voters";
 import type {VoterInput } from "@/api/voters";
-import location from "./location.json";
-import toast from "react-hot-toast";
-import { useState } from "react";
+import toast, {Toaster} from "react-hot-toast";
+import {useEffect, useState} from "react";
+import type {UIK} from "@/types/models.ts";
+import {useVotersStore} from "@/store/votersStore.ts";
+import {api} from "@/api/axios.ts";
 
 const formSchema = z.object({
     firstName: z.string().min(2, "Поле не может быть пустым"),
@@ -30,6 +31,8 @@ const formSchema = z.object({
 
 export default function AddVoterForm() {
     const [loading, setLoading] = useState(false);
+    const [uiks, setUiks] = useState<UIK[]>([]);
+    const {createVoter,error} = useVotersStore();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -43,6 +46,14 @@ export default function AddVoterForm() {
         },
     });
 
+    useEffect(() => {
+        api.get('/uiks')
+            .then(res => {
+                setUiks(res.data)
+            })
+            .catch(() => toast.error("Ошибка загрузки УИКов"))
+    }, []);
+
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true);
         try {
@@ -55,8 +66,12 @@ export default function AddVoterForm() {
                 pin: values.pin,
                 uikCode: Number(values.uikCode),
             };
-            await voterApi.create(payload);
-            toast.success("Избиратель успешно добавлен!");
+            await createVoter(payload)
+                .then(() => {
+                    if(error){
+                        return  toast.error(error)
+                    }
+                })
             form.reset();
         } catch (err: unknown) {
             if (err instanceof Error) toast.error(err.message);
@@ -68,6 +83,7 @@ export default function AddVoterForm() {
 
     return (
         <Form {...form}>
+            <Toaster />
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="grid grid-cols-3 gap-4"
@@ -151,7 +167,7 @@ export default function AddVoterForm() {
                             <FormControl>
                                 <select {...field} className="w-full border rounded-md p-2">
                                     <option value="">-- Выберите УИК --</option>
-                                    {location.map((school:{code:number,name:string}) => (
+                                    {uiks.map((school:{code:number,name:string}) => (
                                         <option key={school.code} value={school.code}>
                                             {school.code} — {school.name}
                                         </option>
@@ -164,7 +180,7 @@ export default function AddVoterForm() {
                 />
 
                 <div className="col-span-3 mt-4">
-                    <Button type="submit" disabled={loading} className="w-full">
+                    <Button type="submit" disabled={loading}>
                         {loading ? "Создание..." : "Создать"}
                         <FiUserPlus />
                     </Button>

@@ -13,11 +13,19 @@ export interface User {
     phone: string;
     pin: string;
     role: Role;
+    uiks?: UserUIK[];
     coordinatorId?: number | null;
     createdAt: string;
     updatedAt: string;
 }
 
+
+export interface UserUIK {
+    id: number;
+    userId: number;
+    uikCode: number;
+    uik: UIK;
+}
 export interface UIK {
     code: number;
     name: string;

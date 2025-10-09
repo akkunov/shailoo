@@ -3,6 +3,16 @@ import {create} from "zustand";
 import {api} from "@/api/axios.ts";
 import type {AxiosError} from "axios";
 
+
+interface CreateAgitatorInput {
+    firstName: string;
+    lastName: string;
+    middleName?: string;
+    phone: string;
+    pin: string;
+    coordinatorId: number;
+    uiks: number[];
+}
 export interface AgitatorState {
     agitators: User[];
     loading: boolean;
@@ -10,7 +20,7 @@ export interface AgitatorState {
 
 
     fetchAgitators: (url:string) => Promise<void>;
-    createAgitator: (input: Partial<User>) => Promise<void>;
+    createAgitator: (input: Partial<CreateAgitatorInput>) => Promise<void>;
     updateAgitator: (id: number, input: Partial<User>) => Promise<void>;
     deleteAgitator: (id: number) => Promise<void>;
     assignUIKs : (id: number, uiks: string[]) => Promise<void>;
@@ -42,6 +52,7 @@ export const useAgitatorsStore = create<AgitatorState>((set,get) => {
                 set({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
             }
         },
+
         assignUIKs: async (userId, uiks) => {
             set({ loading: true, error: null });
             try {
@@ -62,6 +73,7 @@ export const useAgitatorsStore = create<AgitatorState>((set,get) => {
                 set({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
             }
         },
+        
         deleteAgitator: async (id) => {
             set({loading:true, error:null})
             try{

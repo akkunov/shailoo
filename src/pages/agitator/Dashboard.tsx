@@ -1,7 +1,11 @@
+import AddVoterForm from "@/components/voter/AddVoterForm.tsx";
+import VoterList from "@/components/voter/voterList.tsx";
+
 export default function Dashboard(){
     return (
         <div>
-            <h1>Agitator Dashboard</h1>
+            <AddVoterForm />
+            <VoterList />
         </div>
     );
 }

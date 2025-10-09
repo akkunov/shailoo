@@ -1,17 +1,21 @@
-import { useEffect } from "react";
 import {useVotersStore} from "@/store/votersStore.ts";
+import {useEffect} from "react";
+import {useAuthStore} from "@/store/authStore.ts";
 import {Loader2} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 
-export default function VoterList() {
-    const {fetchVotersByAgitator,loading,voters,deleteVoter} = useVotersStore()
 
+export default function VoterComponent() {
+    const {fetchVotersByCoordinatorId,loading,voters,deleteVoter} = useVotersStore();
+    const {user} = useAuthStore()
+    console.log(user?.id)
     useEffect(() => {
-        fetchVotersByAgitator()
+        fetchVotersByCoordinatorId(user?.id)
     }, []);
 
-
-    if(loading) return <div className="flex justify-center items-center  mt-6"><Loader2 className="animate-spin w-8 h-8" /></div>
+    if(loading) return <div className="flex justify-center items-center  mt-6">
+        <Loader2 className="animate-spin w-8 h-8" />
+    </div>
 
     return (
         <div className="mt-6">
@@ -56,5 +60,5 @@ export default function VoterList() {
                 </tbody>
             </table>
         </div>
-    );
+    )
 }

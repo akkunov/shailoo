@@ -38,8 +38,7 @@ export const useAuthStore = create<AuthState>()(
                         phone,
                         password,
                     });
-                    localStorage.setItem("token", response.data.token);
-                    console.log(response.data)
+                    await localStorage.setItem("token", response.data.token);
                     set({
                         user: response.data.user,
                         token: response.data.token,
