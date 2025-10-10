@@ -21,6 +21,7 @@ import AgitatorDashboard from "@/pages/agitator/Dashboard";
 import AgitatorVotersPage from "@/pages/agitator/VotersPage";
 import DashboardRouter from "@/pages/dahsboard";
 import VoterList from "@/pages/admin/VoterList.tsx";
+import StatsPage from "@/pages/StatsPage.tsx";
 
 
 
@@ -43,6 +44,7 @@ export const router = createBrowserRouter(
                     <Route path="coordinators" element={<CoordinatorsList />} />
                     <Route path="agitators" element={<AgitatorList />} />
                     <Route path="voters" element={<VoterList />} />
+                    <Route path="stats" element={<StatsPage />} />
                 </Route>
 
                 {/* --- COORDINATOR --- */}

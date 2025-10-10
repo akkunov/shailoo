@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useAuthStore } from "@/store/authStore";
+import {api} from "@/api/axios.ts";
 
 type EditableUser = User & { isEditing?: boolean };
 
@@ -42,10 +43,11 @@ export default function AgitatorsComponent() {
       .catch(() => toast.error("Ошибка загрузки агитаторов"));
 
     // загрузка УИК
-    fetch("http://172.20.10.2:3001/api/uiks/")
-      .then((res) => res.json())
-      .then(setUiks)
-      .catch(() => toast.error("Ошибка загрузки УИКов"));
+    api.get('/uiks')
+    .then(res => {
+        setUiks(res.data)
+    })
+    .catch(() => toast.error("Ошибка загрузки УИКов"))
   }, []);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "https://shailo-server.vercel.app/api",
+    baseURL: "http://172.20.10.2:3001/api",
     withCredentials: true, // чтобы куки передавались
 });
 
@@ -26,9 +26,9 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // localStorage.removeItem("token")
-            // localStorage.removeItem("user")
-            // window.location.href = "/admin/login"
+            localStorage.removeItem("token")
+            localStorage.removeItem("user")
+            window.location.href = "/admin/login"
         }
         return Promise.reject(error)
     }

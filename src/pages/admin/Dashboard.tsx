@@ -25,6 +25,11 @@ export default function Dashboard() {
                 >
                     Избиратели
                 </Button>
+                <Button className={`round-sm p-2`} variant={'default'}
+                        onClick={() => navigate('stats')}
+                >
+                    Статистика
+                </Button>
             </div>
             <Outlet />
         </>
