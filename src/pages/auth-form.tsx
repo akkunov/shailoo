@@ -54,7 +54,7 @@ export default function AuthForm() {
     };
 
     return (
-        <div className={`flex flex-col justify-center items-center w-screen h-screen`}>
+        <div className={`flex flex-col justify-center items-center h-screen`}>
             <Form {...form}>
                 <Toaster />
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-72">
