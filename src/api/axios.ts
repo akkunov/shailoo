@@ -8,8 +8,6 @@ export const api = axios.create({
 api.interceptors.request.use((res) => {
     const store = localStorage.getItem('auth-storage')
     const token = store && JSON.parse(store);
-    console.log(token)
-
     res.headers.Authorization = `Bearer ${token?.state.token}`
     return res
 })

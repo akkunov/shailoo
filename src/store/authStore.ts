@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios, { AxiosError } from "axios";
 import type {User} from "@/types/models.ts";
+import {api} from "@/api/axios.ts";
 
 interface LoginResponse {
     user: User;
@@ -34,7 +35,7 @@ export const useAuthStore = create<AuthState>()(
             login: async (phone: string, password: string) => {
                 set({ loading: true, error: null });
                 try {
-                    const response = await axios.post<LoginResponse>("/auth/login", {
+                    const response = await api.post<LoginResponse>("/auth/login", {
                         phone,
                         password,
                     });

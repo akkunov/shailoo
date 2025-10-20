@@ -7,9 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { GoChevronRight } from "react-icons/go";
 
-import type {User} from "@/types/models.ts";
 import {useAuthStore} from "@/store/authStore.ts";
-import {api} from "@/api/axios.ts";
 import toast, {Toaster} from "react-hot-toast";
 import type {AxiosError} from "axios";
 import {useNavigate} from "react-router-dom";
@@ -37,12 +35,7 @@ export default function AuthForm() {
 
     const onSubmit = async (values: AuthFormValues) => {
         try {
-            const response = await api.post<{
-                user: User;
-                token: string;
-            }>("/auth/login", values);
-
-            authStore.setUser(response.data.user, response.data.token);
+            await authStore.login(values.phone, values.password);
 
             navigate('/')
 
