@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "https://shailo-server.vercel.app/api",
+    baseURL: "http://10.2.194.57:8080/api",
     withCredentials: true, // чтобы куки передавались
 });
 

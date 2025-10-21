@@ -1,7 +1,7 @@
 // src/store/authStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios, { AxiosError } from "axios";
+import axios, {AxiosError, type AxiosResponse} from "axios";
 import type {User} from "@/types/models.ts";
 import {api} from "@/api/axios.ts";
 
@@ -17,6 +17,7 @@ interface AuthState {
     error: string | null;
 
     login: (phone: string, password: string) => Promise<void>;
+    resetPassword: (oldPassword:string, newPassword:string) => Promise<void>;
     logout: () => void;
     setUser: (user: User, token: string) => void;
 }
@@ -39,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
                         phone,
                         password,
                     });
-                    await localStorage.setItem("token", response.data.token);
+                    localStorage.setItem("token", response.data.token);
                     set({
                         user: response.data.user,
                         token: response.data.token,
@@ -56,12 +57,27 @@ export const useAuthStore = create<AuthState>()(
                     set({ error: message, loading: false });
                 }
             },
-
+            resetPassword : async (oldPassword, newPassword) => {
+                set({ loading: true, error: null });
+                try {
+                    await api.put<AxiosResponse>('auth/reset' , {oldPassword, newPassword})
+                    set({ loading: false, error: null });
+                }catch (err) {
+                    let message = "Неизвестная ошибка";
+                    if (axios.isAxiosError(err)) {
+                        const axiosError = err as AxiosError<{ message: string }>;
+                        message = axiosError.response?.data?.message || axiosError.message;
+                    }
+                    set({ error: message, loading: false });
+                }
+            },
             logout: () => {
-                set({ user: null, token: null, error: null });
+                set({ user: null, token: null, error: null, loading: false });
+                localStorage.removeItem("token");
+                localStorage.removeItem('auth-storage')
                 delete axios.defaults.headers.common["Authorization"];
             },
         }),
-        { name: "auth-storage" } // ключ в localStorage
+        { name: "auth-storage" }
     )
 );

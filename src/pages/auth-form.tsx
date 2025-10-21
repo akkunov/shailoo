@@ -11,6 +11,7 @@ import {useAuthStore} from "@/store/authStore.ts";
 import toast, {Toaster} from "react-hot-toast";
 import type {AxiosError} from "axios";
 import {useNavigate} from "react-router-dom";
+import {Loader2} from "lucide-react";
 
 
 // Схема валидации через Zod
@@ -23,7 +24,7 @@ type AuthFormValues = z.infer<typeof authSchema>;
 
 export default function AuthForm() {
     const navigate = useNavigate();
-    const authStore = useAuthStore();
+    const {login, loading} = useAuthStore();
 
     const form = useForm<AuthFormValues>({
         resolver: zodResolver(authSchema),
@@ -35,14 +36,14 @@ export default function AuthForm() {
 
     const onSubmit = async (values: AuthFormValues) => {
         try {
-            await authStore.login(values.phone, values.password);
+            await login(values.phone, values.password);
 
             navigate('/')
 
         } catch (err:unknown) {
             const axiosError = err as AxiosError<{ message: string }>;
             const message = axiosError?.response?.data?.message || "Произошла ошибка";
-            toast(message)
+            toast.error(message)
         }
     };
 
@@ -58,7 +59,7 @@ export default function AuthForm() {
                             <FormItem>
                                 <FormLabel>Телефон</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Введите телефон" {...field} type={'tel'}/>
+                                    <Input placeholder="Введите телефон" {...field} type={'tel'} autoComplete={'tel'}/>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -71,14 +72,16 @@ export default function AuthForm() {
                             <FormItem>
                                 <FormLabel>Пароль</FormLabel>
                                 <FormControl>
-                                    <Input type="password" placeholder="Введите пароль" {...field} />
+                                    <Input type="password" placeholder="Введите пароль" {...field} autoComplete={'password'}/>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full" variant="default">
-                        Войти <GoChevronRight className="ml-4" />
+                    <Button type="submit" className="w-full" variant="default" disabled={loading} aria-disabled={loading}>
+                        {loading ? <Loader2 /> :<>
+                            Войти <GoChevronRight className="ml-4"/>
+                        </> }
                     </Button>
                 </form>
             </Form>

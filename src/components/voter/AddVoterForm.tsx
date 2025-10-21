@@ -49,7 +49,7 @@ export default function AddVoterForm() {
     });
 
     useEffect(() => {
-        api.get('/uiks')
+        api.get('/uiks/')
             .then(res => setUiks(res.data))
             .catch(() => toast.error("Ошибка загрузки УИКов"));
     }, []);

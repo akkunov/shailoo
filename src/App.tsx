@@ -22,6 +22,7 @@ import AgitatorVotersPage from "@/pages/agitator/VotersPage";
 import DashboardRouter from "@/pages/dahsboard";
 import VoterList from "@/pages/admin/VoterList.tsx";
 import StatsPage from "@/pages/StatsPage.tsx";
+import ResetPasswordPage from "@/pages/reset-password.tsx";
 
 
 
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
             <Route path="/" element={<Root />}>
 
                 <Route index element={<RoleRouter />} />
+                <Route  path={'reset-password'} element={<ResetPasswordPage />}/>
                 <Route
                     path="admin"
                     element={
