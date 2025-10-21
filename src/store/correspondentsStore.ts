@@ -34,7 +34,7 @@ export const useCorrespondentsStore = create<CorrespondentsState>((set, get) => 
     createCorrespondent: async (input) => {
         set({ loading: true, error: null });
         try {
-            const { data } = await api.post<User>("/users", input);
+            const { data } = await api.post<User>("/users/create-coordinator", input);
             set({ correspondents: [...get().correspondents, data], loading: false });
         } catch (err:unknown) {
             const axiosError = err as AxiosError<{message:string}>

@@ -72,7 +72,7 @@ export default function CoordinatorsComponent() {
         if (!newUser) return;
         try {
             await createCorrespondent(newUser);
-            toast.success("Корреспондент добавлен");
+            toast.success("Добавлен");
             setNewUser(null);
         } catch (err: unknown) {
             toast.error(err instanceof Error ? err.message : "Ошибка при создании");
@@ -93,6 +93,7 @@ export default function CoordinatorsComponent() {
                             phone: "",
                             pin: "",
                             role: "COORDINATOR",
+                            password:'Pass200042-'
                         })
                     }
                 >

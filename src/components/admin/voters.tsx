@@ -5,7 +5,7 @@ import toast, {Toaster} from "react-hot-toast";
 import {Button} from "@/components/ui/button.tsx";
 
 export default function VotersComponent(){
-    const {voters, loading, error, fetchVoters} = useVotersStore()
+    const {voters, loading, error, fetchVoters, deleteVoter} = useVotersStore()
 
     useEffect(() => {
         fetchVoters()
@@ -49,6 +49,8 @@ export default function VotersComponent(){
                         <td className="p-2 flex gap-2">
                             <Button
                                 variant="destructive"
+                                onClick={() => deleteVoter(user.id)}
+                                disabled={loading}
                             >
                                 Удалить
                             </Button>

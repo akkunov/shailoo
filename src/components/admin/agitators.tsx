@@ -5,12 +5,22 @@ import {Loader2} from "lucide-react";
 import toast, {Toaster} from "react-hot-toast";
 
 export default function AgitatorsComponent() {
-    const {agitators, loading, error, fetchAgitators} = useAgitatorsStore();
+    const {agitators, loading, error, fetchAgitators,deleteAgitator} = useAgitatorsStore();
     useEffect(() => {
         fetchAgitators('all-agitators')
             .then(() => toast.success("Данные загружены"))
             .catch((err) => toast.error(err.message));
     }, []);
+    const handleDelete = async (id: number) => {
+        if (!confirm("Удалить этого агитатора?")) return;
+        try {
+            await deleteAgitator(id);
+            toast.success("Агитатор удалён");
+        } catch (err: unknown) {
+            toast.error(err instanceof Error ? err.message : "Ошибка при удалении");
+        }
+    };
+
 
     if (loading) return <div className={`flex flex-col items-center justify-center h-screen`}>
         <Loader2 className="animate-spin w-8 h-8"/>
@@ -43,6 +53,7 @@ export default function AgitatorsComponent() {
                             <td className="p-2 flex gap-2">
                                 <Button
                                     variant="destructive"
+                                    onClick={()=>handleDelete(user.id)}
                                 >
                                     Удалить
                                 </Button>

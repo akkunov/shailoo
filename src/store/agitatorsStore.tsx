@@ -77,7 +77,7 @@ export const useAgitatorsStore = create<AgitatorState>((set,get) => {
         deleteAgitator: async (id) => {
             set({loading:true, error:null})
             try{
-                await api.delete<number>(`/users/${id}`);
+                await api.delete(`/users/${id}`);
                 set({ loading:false, error:null });
             }catch (err:unknown){
                 const axiosError = err as AxiosError<{message:string}>

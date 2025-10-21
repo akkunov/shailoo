@@ -17,6 +17,7 @@ export interface User {
     coordinatorId?: number | null;
     createdAt: string;
     updatedAt: string;
+    password:string;
 }
 
 

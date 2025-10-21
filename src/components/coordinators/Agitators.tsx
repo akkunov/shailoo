@@ -68,6 +68,7 @@ export default function AgitatorsComponent() {
         middleName: user.middleName,
         phone: user.phone,
         pin: user.pin,
+        uiks: user.uiks,
       });
       toast.success("Агитатор обновлён");
       setEditableUsers((prev) =>
@@ -102,7 +103,7 @@ export default function AgitatorsComponent() {
         middleName: form.middleName.trim(),
         phone: form.phone.trim(),
         pin: form.pin.trim(),
-          uiks: form.uiks.map((uik) => Number(uik)),
+        uiks: form.uiks.map((uik) => Number(uik)),
         coordinatorId: user.id,
       };
 
