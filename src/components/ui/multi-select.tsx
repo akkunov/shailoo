@@ -48,7 +48,7 @@ export function MultiSelect({
 
     const selectedLabels = options
         .filter((opt) => selected.includes(opt.value))
-        .map((opt) => opt.label)
+        .map((opt) => opt.value)
         .join(", ");
 
     return (

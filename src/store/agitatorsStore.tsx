@@ -21,7 +21,7 @@ export interface AgitatorState {
 
     fetchAgitators: (url:string) => Promise<void>;
     createAgitator: (input: Partial<CreateAgitatorInput>) => Promise<void>;
-    updateAgitator: (id: number, input: Partial<User>) => Promise<void>;
+    updateAgitator: (id: number, input: Partial<CreateAgitatorInput>) => Promise<void>;
     deleteAgitator: (id: number) => Promise<void>;
     assignUIKs : (id: number, uiks: string[]) => Promise<void>;
 }
@@ -63,17 +63,23 @@ export const useAgitatorsStore = create<AgitatorState>((set,get) => {
                 set({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
             }
         },
-        updateAgitator: async (id,input) => {
+        updateAgitator: async (id, input: Partial<CreateAgitatorInput>) => {
             set({ loading: true, error: null });
             try {
                 const { data } = await api.put<User>(`/users/${id}`, input);
-                set({ agitators: get().agitators.map(c => c.id === id ? data : c), loading: false });
-            } catch (err:unknown) {
-                const axiosError = err as AxiosError<{message:string}>
-                set({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
+                set({
+                    agitators: get().agitators.map(c => c.id === id ? data : c),
+                    loading: false
+                });
+            } catch (err: unknown) {
+                const axiosError = err as AxiosError<{ message: string }>;
+                set({
+                    error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при обновлении",
+                    loading: false
+                });
             }
         },
-        
+
         deleteAgitator: async (id) => {
             set({loading:true, error:null})
             try{

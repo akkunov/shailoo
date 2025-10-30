@@ -25,7 +25,7 @@ export interface UserUIK {
     id: number;
     userId: number;
     uikCode: number;
-    uik: UIK;
+    uik?: UIK | null;
 }
 export interface UIK {
     code: number;
