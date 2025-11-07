@@ -5,6 +5,11 @@ import axios, {AxiosError, type AxiosResponse} from "axios";
 import type {User} from "@/types/models.ts";
 import {api} from "@/api/axios.ts";
 
+export type Result<T = void> =
+    | { success: true; data?: T }
+    | { success: false; message: string };
+
+
 interface LoginResponse {
     user: User;
     token: string;
@@ -16,7 +21,7 @@ interface AuthState {
     loading: boolean;
     error: string | null;
 
-    login: (phone: string, password: string) => Promise<void>;
+    login: (phone: string, password: string) => Promise<Result<LoginResponse>>;
     resetPassword: (oldPassword:string, newPassword:string) => Promise<void>;
     logout: () => void;
     setUser: (user: User, token: string) => void;
@@ -36,18 +41,17 @@ export const useAuthStore = create<AuthState>()(
             login: async (phone: string, password: string) => {
                 set({ loading: true, error: null });
                 try {
-                    const response = await api.post<LoginResponse>("/auth/login", {
-                        phone,
-                        password,
-                    });
+                    const response = await api.post<LoginResponse>("/auth/login", { phone, password });
                     localStorage.setItem("token", response.data.token);
+
                     set({
                         user: response.data.user,
                         token: response.data.token,
                         loading: false,
+                        error: null,
                     });
 
-                    axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
+                    return { success: true,data: response.data };
                 } catch (err) {
                     let message = "Неизвестная ошибка";
                     if (axios.isAxiosError(err)) {
@@ -55,6 +59,7 @@ export const useAuthStore = create<AuthState>()(
                         message = axiosError.response?.data?.message || axiosError.message;
                     }
                     set({ error: message, loading: false });
+                    return { success: false, message };
                 }
             },
             resetPassword : async (oldPassword, newPassword) => {

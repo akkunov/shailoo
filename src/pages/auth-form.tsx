@@ -9,7 +9,6 @@ import { GoChevronRight } from "react-icons/go";
 
 import {useAuthStore} from "@/store/authStore.ts";
 import toast, {Toaster} from "react-hot-toast";
-import type {AxiosError} from "axios";
 import {useNavigate} from "react-router-dom";
 import {Loader2} from "lucide-react";
 
@@ -35,16 +34,15 @@ export default function AuthForm() {
     });
 
     const onSubmit = async (values: AuthFormValues) => {
-        try {
-            await login(values.phone, values.password);
+       const result = await login(values.phone, values.password);
 
-            navigate('/')
-
-        } catch (err:unknown) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            const message = axiosError?.response?.data?.message || "Произошла ошибка";
-            toast.error(message)
+        if (!result.success) {
+            toast.error(result.message);
+            return;
         }
+
+        toast.success("Успешный вход!");
+        navigate("/");
     };
 
     return (

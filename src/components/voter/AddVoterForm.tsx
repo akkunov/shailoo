@@ -24,9 +24,9 @@ const formSchema = z.object({
     firstName: z.string().min(2, "Поле не может быть пустым"),
     lastName: z.string().min(2, "Поле не может быть пустым"),
     middleName: z.string().optional(),
-    phone: z.string().optional(),
+    phone: z.string().min(6, "Поле не может быть пустым"),
     address: z.string().optional(),
-    pin: z.string().max(14).min(14).optional(),
+    pin: z.string().optional(),
     uikCode: z.string().min(1, "Выберите УИК"),
 });
 
