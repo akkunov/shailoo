@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useVotersStore } from "@/store/votersStore.ts";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
+import SearchComponent from "@/components/search/Search.tsx";
+import {Toaster} from "react-hot-toast";
 
 export default function VoterList() {
     const { fetchVotersByAgitator, loading, voters, deleteVoter } = useVotersStore();
@@ -20,7 +22,8 @@ export default function VoterList() {
     return (
         <div className="mt-6">
             <h2 className="text-xl font-semibold mb-4">Список избирателей</h2>
-
+            <SearchComponent type={'voter'}/>
+            <Toaster />
             {/* Десктопная таблица */}
             <div className="hidden md:block overflow-x-auto rounded-lg border shadow-sm">
                 <table className="w-full border-collapse text-sm">
