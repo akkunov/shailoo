@@ -1,8 +1,10 @@
 import {useVotersStore} from "@/store/votersStore.ts";
-import {useEffect} from "react";
+import  {useEffect} from "react";
 import {useAuthStore} from "@/store/authStore.ts";
 import {Loader2} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
+import SearchComponent from "@/components/search/Search.tsx";
+import {Toaster} from "react-hot-toast";
 
 
 export default function VoterComponent() {
@@ -19,6 +21,8 @@ export default function VoterComponent() {
 
     return (
         <div className="mt-6">
+            <SearchComponent type={'voter'}/>
+            <Toaster/>
             <h2 className="text-xl font-semibold mb-4">Список избирателей</h2>
             <table className="w-full border text-sm">
                 <thead className="bg-gray-100">

@@ -1,10 +1,14 @@
 import type {User} from "@/types/models.ts";
 import {create} from "zustand";
 import {api} from "@/api/axios.ts";
-import type {AxiosError} from "axios";
+import axios, {type AxiosError} from "axios";
+
+export type Result<T = void> =
+    | { success: true; data?: T }
+    | { success: false; message: string };
 
 
-interface CreateAgitatorInput {
+export interface CreateAgitatorInput {
     firstName: string;
     lastName: string;
     middleName?: string;
@@ -20,7 +24,7 @@ export interface AgitatorState {
 
 
     fetchAgitators: (url:string) => Promise<void>;
-    createAgitator: (input: Partial<CreateAgitatorInput>) => Promise<void>;
+    createAgitator: (input: Partial<CreateAgitatorInput>) => Promise<Result<User>>;
     updateAgitator: (id: number, input: Partial<CreateAgitatorInput>) => Promise<void>;
     deleteAgitator: (id: number) => Promise<void>;
     assignUIKs : (id: number, uiks: string[]) => Promise<void>;
@@ -47,9 +51,15 @@ export const useAgitatorsStore = create<AgitatorState>((set,get) => {
             try {
                 const { data } = await api.post<User>("/users/create-agitator", user);
                 set({ agitators: [...get().agitators, data], loading: false });
+                return { success: true,data: data };
             } catch (err:unknown) {
-                const axiosError = err as AxiosError<{message:string}>
-                set({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
+                let message = "Неизвестная ошибка";
+                if (axios.isAxiosError(err)) {
+                    const axiosError = err as AxiosError<{ message: string }>;
+                    message = axiosError.response?.data?.message || axiosError.message;
+                }
+                set({loading: false });
+                return { success: false, message };
             }
         },
 

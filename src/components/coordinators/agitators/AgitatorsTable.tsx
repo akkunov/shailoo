@@ -1,4 +1,4 @@
-import type { UIK, User } from "@/types/models.ts";
+import type {UIK, User} from "@/types/models.ts";
 import EditableRow from "./EditableRow.tsx";
 
 interface Props {
@@ -25,53 +25,56 @@ export default function AgitatorsTable({
                                            fetchAgitators,
                                            updateAgitator
                                        }: Props) {
-    return (
-        <div className="mt-4">
-            {/* --- Для десктопа таблица --- */}
-            <div className="hidden md:block overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300 min-w-[600px]">
-                    <thead>
-                    <tr className="bg-gray-100">
-                        <th className="border p-2">Фамилия</th>
-                        <th className="border p-2">Имя</th>
-                        <th className="border p-2">Отчество</th>
-                        <th className="border p-2">Телефон</th>
-                        <th className="border p-2">PIN</th>
-                        <th className="border p-2">Роль</th>
-                        <th className="border p-2">УИК</th>
-                        <th className="border p-2">Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {editableUsers.map(user =>
-                        <EditableRow
-                            key={user.id}
-                            user={user}
-                            setEditableUsers={setEditableUsers}
-                            uiks={uiks}
-                            deleteAgitator={deleteAgitator}
-                            fetchAgitators={fetchAgitators}
-                            updateAgitator={updateAgitator}
-                        />
-                    )}
-                    </tbody>
-                </table>
-            </div>
 
-            {/* --- Для мобильных карточки --- */}
-            <div className="md:hidden flex flex-col gap-3">
-                {editableUsers.map(user =>
-                    <EditableRow
-                        key={user.id}
-                        user={user}
-                        setEditableUsers={setEditableUsers}
-                        uiks={uiks}
-                        deleteAgitator={deleteAgitator}
-                        fetchAgitators={fetchAgitators}
-                        updateAgitator={updateAgitator}
-                    />
-                )}
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
+        return (
+            <div className="mt-4">
+                {/* --- Для десктопа таблица --- */}
+                <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300 min-w-[600px]">
+                        <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border p-2">Фамилия</th>
+                            <th className="border p-2">Имя</th>
+                            <th className="border p-2">Отчество</th>
+                            <th className="border p-2">Телефон</th>
+                            <th className="border p-2">PIN</th>
+                            <th className="border p-2">Роль</th>
+                            <th className="border p-2">УИК</th>
+                            <th className="border p-2">Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {editableUsers.map(user =>
+                            <EditableRow
+                                key={user.id}
+                                user={user}
+                                setEditableUsers={setEditableUsers}
+                                uiks={uiks}
+                                deleteAgitator={deleteAgitator}
+                                fetchAgitators={fetchAgitators}
+                                updateAgitator={updateAgitator}
+                            />
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        );
+    }
+    return (
+        <div className="md:hidden flex flex-col gap-3">
+            {editableUsers.map(user =>
+                <EditableRow
+                    key={user.id}
+                    user={user}
+                    setEditableUsers={setEditableUsers}
+                    uiks={uiks}
+                    deleteAgitator={deleteAgitator}
+                    fetchAgitators={fetchAgitators}
+                    updateAgitator={updateAgitator}
+                />
+            )}
         </div>
-    );
+    )
 }

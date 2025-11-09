@@ -26,6 +26,9 @@ export default function Header() {
                     </Button>
                 </Link>
                 <div className={`flex flex-row gap-2`}>
+                    <div>
+                        <h2>{authStore.user?.firstName + " " + authStore.user?.lastName}</h2>
+                    </div>
                     <Button  variant={'default'} onClick={handleLogout} className={`text-white`}>
                         <RiLogoutCircleRLine />
                     </Button>

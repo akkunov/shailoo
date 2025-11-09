@@ -10,11 +10,12 @@ import toast from "react-hot-toast";
 import type { UIK, User } from "@/types/models.ts";
 import type { AgitatorFormValues } from "@/lib/validation.ts";
 import { agitatorSchema } from "@/lib/validation.ts";
+import type {CreateAgitatorInput, Result} from "@/store/agitatorsStore.tsx";
 
 interface Props {
     user: User | null;
     uiks: UIK[];
-    createAgitator: (input: any) => Promise<void>;
+    createAgitator: (input: Partial<CreateAgitatorInput>) => Promise<Result<User>>;
     fetchAgitators: (type: string) => Promise<void>;
 }
 
@@ -38,7 +39,13 @@ export default function AgitatorForm({ user, uiks, createAgitator, fetchAgitator
 
         try {
             const payload = { ...data, uiks: data.uiks.map(Number), coordinatorId: user.id };
-            await createAgitator(payload);
+           const result= await createAgitator(payload);
+           console.log(result)
+            if (!result.success) {
+                toast.error(result.message);
+                reset();
+                return;
+            }
             toast.success("Агитатор добавлен");
             reset();
             await fetchAgitators("agitators");

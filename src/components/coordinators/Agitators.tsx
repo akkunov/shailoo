@@ -8,6 +8,7 @@ import toast, {Toaster} from "react-hot-toast";
 import type {UIK, User} from "@/types/models";
 import AgitatorForm from "@/components/coordinators/agitators/AgitatorForm.tsx";
 import AgitatorsTable from "@/components/coordinators/agitators/AgitatorsTable.tsx";
+import SearchComponent from "@/components/search/Search.tsx";
 
 
 type EditableUser = User & { isEditing?: boolean };
@@ -33,6 +34,7 @@ export default function AgitatorsComponent() {
 
     return (
         <div className="p-4">
+            <SearchComponent type={'agitator'}/>
             <Toaster/>
             <AgitatorForm
                 user={user}
