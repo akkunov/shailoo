@@ -33,7 +33,7 @@ const formSchema = z.object({
 export default function AddVoterForm() {
     const [loading, setLoading] = useState(false);
     const [uiks, setUiks] = useState<UIK[]>([]);
-    const { createVoter, error } = useVotersStore();
+    const { createVoter } = useVotersStore();
     const { user } = useAuthStore(); // текущий пользователь
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -69,9 +69,9 @@ export default function AddVoterForm() {
             };
 
             // Создаём избирателя
-            await createVoter(payload);
-            if (error) {
-                toast.error(error);
+            const result = await createVoter(payload);
+            if (!result.success) {
+                toast.error(result.message);
                 return;
             }
 

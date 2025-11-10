@@ -1,7 +1,12 @@
 import type {Voter} from "@/types/models.ts";
 import {create} from "zustand";
 import {api} from "@/api/axios.ts";
-import type {AxiosError} from "axios";
+import axios, {type AxiosError} from "axios";
+
+export type Result<T = void> =
+    | { success: true; data?: T }
+    | { success: false; message: string };
+
 
 interface VotersState {
     voters: Voter[];
@@ -10,7 +15,7 @@ interface VotersState {
 
     fetchVoters: () => Promise<void>;
     fetchVotersByCoordinatorId: (id?: number) => Promise<void>;
-    createVoter: (voter:Partial<Voter> ) => Promise<void>;
+    createVoter: (voter:Partial<Voter> ) => Promise<Result<Voter>>;
     fetchVotersByAgitator: () => Promise<void>;
     deleteVoter: (id: number) => Promise<void>;
     updateVoter: (id: number, voter: Partial<Voter>) => Promise<void>;
@@ -53,6 +58,7 @@ export const useVotersStore = create<VotersState>((setState,get) => {
 
             } catch (err:unknown) {
                 const axiosError = err as AxiosError<{message:string}>
+
                 setState({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
             }
         },
@@ -61,9 +67,15 @@ export const useVotersStore = create<VotersState>((setState,get) => {
             try {
                 const { data } = await api.post<Voter>("/voters", voter);
                 setState({ voters: [...get().voters, data], loading: false });
+                return { success: true,data: data };
             } catch (err:unknown) {
-                const axiosError = err as AxiosError<{message:string}>
-                setState({ error: axiosError?.response?.data?.message || axiosError?.message || "Ошибка при загрузке", loading: false });
+                let message = "Неизвестная ошибка";
+                if (axios.isAxiosError(err)) {
+                    const axiosError = err as AxiosError<{ message: string }>;
+                    message = axiosError.response?.data?.message || axiosError.message;
+                }
+                setState({loading: false });
+                return { success: false, message };
             }
         },
         deleteVoter: async (id) => {
