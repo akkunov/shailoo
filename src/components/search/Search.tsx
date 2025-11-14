@@ -4,16 +4,16 @@ import {api} from "@/api/axios.ts";
 import toast from "react-hot-toast";
 
 interface SearchProps {
-    type: "agitator" | "voter";
+    type?: "agitator" | "voter";
+    onUserSelect?: (phone: string) => void;
 }
 
-const SearchComponent: React.FC<SearchProps> = ({ type }) => {
+const SearchComponent: React.FC<SearchProps> = ({ type,onUserSelect  }) => {
     const [search, setSearch] = useState("");
     const [results, setResults] = useState<Agitator[] | Voter[]>([]);
     const [loading, setLoading] = useState(false);
     const [skip, setSkip] = useState(0);
     const take = 10;
-    const [hasMore, setHasMore] = useState(true);
 
     const firstRender = useRef(true); // чтобы пропустить первый рендер
 
@@ -21,7 +21,6 @@ const SearchComponent: React.FC<SearchProps> = ({ type }) => {
         if (loading) return;
         if (!search) {
             setResults([]);
-            setHasMore(false);
             return;
         }
 
@@ -41,8 +40,6 @@ const SearchComponent: React.FC<SearchProps> = ({ type }) => {
             setResults(prev => [...prev, ...data]);
             setSkip(prev => prev + data.length);
         }
-
-        setHasMore(data.length === take);
         setLoading(false);
     };
 
@@ -59,43 +56,37 @@ const SearchComponent: React.FC<SearchProps> = ({ type }) => {
         return () => clearTimeout(timer);
     }, [search]);
 
-    const loadMore = () => fetchResults();
-
     return (
         <div className="p-4 border rounded-md w-full max-w-lg mx-auto">
             <input
                 type="text"
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder={`Поиск ${type === "agitator" ? "агитаторов" : "избирателей"}`}
                 className="w-full p-2 border rounded mb-4"
             />
 
             <ul className="space-y-2">
-                {results.map(item => (
-                    <li key={item.id} className="p-2 border rounded">
-                        <div>
-                            <strong>{item.lastName} {item.firstName} {item.middleName || ""}</strong>
-                        </div>
+                {results.map((item) => (
+                    <li
+                        key={item.id}
+                        className="p-2 border rounded cursor-pointer hover:bg-gray-100"
+                        onClick={() => onUserSelect?.(item.phone)}
+                    >
+                        <strong>
+                            {item.lastName} {item.firstName} {item.middleName || ""}
+                        </strong>
                         <div>Телефон: {item.phone}</div>
                         {"uiks" in item && (
                             <div>
-                                УИК: {(item.uiks as Agitator["uiks"]).map(u => u.uik.name).join(", ")}
+                                УИК: {(item.uiks as Agitator["uiks"])
+                                .map((u) => u.uik.name)
+                                .join(", ")}
                             </div>
                         )}
                     </li>
                 ))}
             </ul>
-
-            {hasMore && (
-                <button
-                    onClick={loadMore}
-                    disabled={loading}
-                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-                >
-                    {loading ? "Загрузка..." : "Загрузить ещё"}
-                </button>
-            )}
         </div>
     );
 };

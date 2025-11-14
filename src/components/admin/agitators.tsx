@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAgitatorsStore } from "@/store/agitatorsStore";
-import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import type {UIK, User} from "@/types/models";
 import AgitatorsTable from "@/components/coordinators/agitators/AgitatorsTable.tsx";
 import {api} from "@/api/axios.ts";
+import AdminSearchPage from "@/components/admin/AdminSearchPage.tsx";
 
 export default function AgitatorsComponent() {
     const {
@@ -18,22 +18,8 @@ export default function AgitatorsComponent() {
     } = useAgitatorsStore();
 
     const [editableUsers, setEditableUsers] = useState<(User & { isEditing?: boolean })[]>([]);
-    const [search, setSearch] = useState("");
-    const [debouncedValue, setDebouncedValue] = useState(search);
-    const [isFirstRender, setIsFirstRender] = useState(true);
     const [uiks, setUiks] = useState<UIK[]>([])
 
-    // --- Debounce search ---
-    useEffect(() => {
-        if (isFirstRender) {
-            setIsFirstRender(false);
-            return;
-        }
-        const timeout = setTimeout(() => {
-            setDebouncedValue(search.trim());
-        }, 500);
-        return () => clearTimeout(timeout);
-    }, [search]);
 
 
     useEffect(() => {
@@ -45,17 +31,14 @@ export default function AgitatorsComponent() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                await fetchAgitators(debouncedValue ? `search?query=${debouncedValue}` : "all-agitators");
+                await fetchAgitators( "all-agitators");
                 toast.success("Данные обновлены");
             } catch (err: unknown) {
                 toast.error(err instanceof Error ? err.message : "Ошибка загрузки данных");
             }
         };
-        if (!isFirstRender) fetchData();
-        else {
-            fetchAgitators("all-agitators").catch(console.error);
-        }
-    }, [debouncedValue]);
+        fetchData();
+    }, []);
 
     // --- Синхронизация состояния редактирования ---
     useEffect(() => {
@@ -74,15 +57,7 @@ export default function AgitatorsComponent() {
     return (
         <div className="p-4">
             <Toaster />
-            <div className="mb-4 flex justify-between items-center">
-                <Input
-                    placeholder="Поиск агитатора..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full md:w-1/2"
-                />
-            </div>
-
+            <AdminSearchPage />
             <AgitatorsTable
                 editableUsers={editableUsers}
                 setEditableUsers={setEditableUsers}

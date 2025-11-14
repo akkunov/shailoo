@@ -155,15 +155,15 @@ export default function CoordinatorsComponent() {
 
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
-                <tr className="bg-gray-100">
-                    <th className="border p-2">Фамилия</th>
-                    <th className="border p-2">Имя</th>
-                    <th className="border p-2">Отчество</th>
-                    <th className="border p-2">Телефон</th>
-                    <th className="border p-2">PIN</th>
-                    <th className="border p-2">Роль</th>
-                    <th className="border p-2">Действия</th>
-                </tr>
+                    <tr className="bg-gray-100">
+                        <th className="border p-2">Фамилия</th>
+                        <th className="border p-2">Имя</th>
+                        <th className="border p-2">Отчество</th>
+                        <th className="border p-2">Телефон</th>
+                        <th className="border p-2">PIN</th>
+                        <th className="border p-2">Роль</th>
+                        <th className="border p-2">Действия</th>
+                    </tr>
                 </thead>
                 <tbody>
                 {editableUsers.map((user) => (
