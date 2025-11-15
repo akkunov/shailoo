@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
 import {MultiSelect} from "@/components/ui/multi-select"; // у тебя уже был такой компонент
 import type { UIK, Voter } from "@/types/models";
 
@@ -61,6 +60,12 @@ export default function StatsPage() {
     const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
     const [uiksList, setUiksList] = useState<UIK[]>([]);
     const [loadingLists, setLoadingLists] = useState(false);
+
+    const [votersModalOpen, setVotersModalOpen] = useState(false);
+    const [modalLoading, setModalLoading] = useState(false);
+    const [currentVoters, setCurrentVoters] = useState<Voter[]>([]);
+    const [currentUserName, setCurrentUserName] = useState<string>("");
+
 
     // debounced filters — чтобы не дергать API на каждое изменение
     const debStart = useDebounce(startDate, 660);
@@ -126,6 +131,20 @@ export default function StatsPage() {
             console.error("Ошибка загрузки статистики:", err);
         } finally {
             setLoading(false);
+        }
+    }
+    async function loadVoters(userId: number, name: string) {
+        setVotersModalOpen(true);
+        setModalLoading(true);
+        setCurrentUserName(name);
+
+        try {
+            const res = await api.get(`/voters/byAgitator/${userId}`);
+            setCurrentVoters(res.data || []);
+        } catch (e) {
+            console.error("Ошибка загрузки избирателей", e);
+        } finally {
+            setModalLoading(false);
         }
     }
 
@@ -301,7 +320,12 @@ export default function StatsPage() {
                                             <td className="p-2">{u.name}</td>
                                             <td className="p-2">{u.coordinator ?? "—"}</td>
                                             <td className="p-2 font-medium">
-                                                <Link to={`#`}>{u.votersCount}</Link>
+                                                <button
+                                                    onClick={() => loadVoters(u.id, u.name)}
+                                                    className="text-blue-600 hover:underline"
+                                                >
+                                                    {u.votersCount}
+                                                </button>
                                             </td>
                                             <td className="p-2">{u.uiks.map(s => s.code).join(", ")}</td>
                                         </tr>
@@ -341,6 +365,62 @@ export default function StatsPage() {
                     <Button onClick={() => loadData(totalPages)} disabled={loading || page === totalPages}>
                         Последняя
                     </Button>
+                </div>
+            )}
+            {votersModalOpen && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-[600px] max-h-[80vh] overflow-hidden flex flex-col">
+
+                        <div className="p-4 border-b flex justify-between items-center">
+                            <h2 className="text-xl font-semibold">
+                                Избиратели — {currentUserName}
+                            </h2>
+                            <button
+                                onClick={() => setVotersModalOpen(false)}
+                                className="text-gray-500 hover:text-black text-xl"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <div className="p-4 overflow-y-auto flex-1">
+                            {modalLoading ? (
+                                <div className="flex justify-center py-10">
+                                    <Loader2 className="animate-spin w-10 h-10 text-gray-500" />
+                                </div>
+                            ) : currentVoters.length ? (
+                                <table className="min-w-full text-sm">
+                                    <thead>
+                                    <tr className="border-b text-left">
+                                        <th className="p-2">№</th>
+                                        <th className="p-2">ФИО</th>
+                                        <th className="p-2">Телефон</th>
+                                        <th className="p-2">UIK</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {currentVoters.map((v,idx) => (
+                                        <tr key={v.id} className="border-b">
+                                            <td className="p-2">{idx + 1}</td>
+                                            <td className="p-2">{v.lastName} {v.firstName}</td>
+                                            <td className="p-2">{v.phone ?? "—"}</td>
+                                            <td className="p-2">{v.uikCode ?? "—"}</td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <p className="text-center py-6 text-muted-foreground">
+                                    Нет избирателей
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="p-4 border-t flex justify-end">
+                            <Button onClick={() => setVotersModalOpen(false)}>Закрыть</Button>
+                        </div>
+
+                    </div>
                 </div>
             )}
         </div>
